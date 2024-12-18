@@ -4,4 +4,7 @@ import vue from '@vitejs/plugin-vue'
 // https://vite.dev/config/
 export default defineConfig({
   plugins: [vue()],
+  optimizeDeps: {
+    include: ['echarts', 'vue3-echarts', 'vue3-apexcharts'],
+  },
 })

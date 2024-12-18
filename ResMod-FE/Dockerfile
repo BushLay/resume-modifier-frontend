@@ -1,0 +1,26 @@
+# 第一阶段：node镜像打包
+# 如果提示：ERROR [internal] load metadata for docker.io/library/nginx:latest  
+# 则需要先执行：docker pull nginx:latest 
+# 如果提示：ERROR [internal] load metadata for docker.io/library/node:latest  
+# 则需要先执行：docker pull node:latest 
+
+FROM node:latest AS frontend-builder
+WORKDIR /build-app
+COPY . .
+RUN npm config set registry https://registry.npmmirror.com
+RUN npm install
+RUN npm run build
+
+# 第二阶段：nginx打包
+FROM nginx:latest
+EXPOSE 80
+WORKDIR /app
+# 替换nginx配置
+COPY nginx.conf /etc/nginx/conf.d/default.conf
+# 将第一阶段的静态文件复制到nginx中
+RUN rm -rf /usr/share/nginx/html
+RUN mkdir /usr/share/nginx/html
+COPY --from=frontend-builder /build-app/dist /usr/share/nginx/html
+
+# 运行
+CMD ["nginx", "-g", "daemon off;"]
