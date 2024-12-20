@@ -12,6 +12,7 @@
             :options="salaryChartOptions" 
             :series="salarySeries"
         />
+        
         <!-- <apexchart 
             type="bar" 
             height="350" 
